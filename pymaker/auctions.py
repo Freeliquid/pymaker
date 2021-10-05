@@ -436,6 +436,16 @@ class Flapper(AuctionContract):
         def __repr__(self):
             return f"Flapper.TendLog({pformat(vars(self))})"
 
+    class TickLog:
+        def __init__(self, lognote: LogNote):
+            self.guy = Address(lognote.usr)
+            self.id = Web3.toInt(lognote.arg1)
+            self.block = lognote.block
+            self.tx_hash = lognote.tx_hash
+
+        def __repr__(self):
+            return f"Flapper.TickLog({pformat(vars(self))})"
+
     def __init__(self, web3: Web3, address: Address):
         super(Flapper, self).__init__(web3, address, Flapper.abi, self.bids)
 
@@ -495,6 +505,8 @@ class Flapper(AuctionContract):
                 history.append(Flapper.TendLog(log))
             elif log.sig == '0xc959c42b':
                 history.append(AuctionContract.DealLog(log))
+            elif log.sig == '0xfc7b6aee':
+                history.append(Flapper.TickLog(log))
         return history
 
     def parse_event(self, event):
